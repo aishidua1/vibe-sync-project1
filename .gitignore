@@ -9,7 +9,9 @@ __pycache__/
 .pytest_cache/
 vibe_sync.log
 
-# Google credentials
+# Credentials and cache
+credentials/
+.cache
 python-client/credentials/google_credentials.json
 python-client/credentials/google_token.json
 python-client/.cache
