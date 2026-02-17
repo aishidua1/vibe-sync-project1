@@ -1,0 +1,19 @@
+{
+  "name": "vibe-sync-server",
+  "version": "1.0.0",
+  "description": "Vibe-Sync Node.js logic hub — receives Spotify/Calendar data, calls AI, broadcasts results",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "openai": "^4.77.0",
+    "socket.io": "^4.8.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

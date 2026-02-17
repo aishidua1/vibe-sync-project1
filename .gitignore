@@ -1,0 +1,23 @@
+# Environment files
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+vibe_sync.log
+
+# Google credentials
+python-client/credentials/google_credentials.json
+python-client/credentials/google_token.json
+python-client/.cache
+
+# Node.js
+node_modules/
+node-server/vibe_sync.log
+
+# Next.js
+nextjs-dashboard/.next/
+nextjs-dashboard/out/
