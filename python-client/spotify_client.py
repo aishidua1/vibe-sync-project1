@@ -26,18 +26,17 @@ class SpotifyClient:
             track = result["item"]
             artist_id = track["artists"][0]["id"]
 
+            images = track["album"].get("images", [])
+            album_art_url = images[0]["url"] if images else None
+
             track_info = {
                 "name": track["name"],
                 "artist": track["artists"][0]["name"],
                 "album": track["album"]["name"],
+                "album_art_url": album_art_url,
                 "artist_genres": self._get_artist_genres(artist_id),
                 "popularity": track.get("popularity", 0),
             }
-
-            # Attempt audio features (will 403 for new apps post-Nov 2024)
-            audio_features = self._try_get_audio_features(track["id"])
-            if audio_features:
-                track_info["audio_features"] = audio_features
 
             return track_info
 
@@ -76,18 +75,3 @@ class SpotifyClient:
         except Exception:
             return []
 
-    def _try_get_audio_features(self, track_id):
-        """Try to get audio features. Returns None on 403 (deprecated)."""
-        try:
-            features = self.sp.audio_features([track_id])
-            if features and features[0]:
-                f = features[0]
-                return {
-                    "valence": f["valence"],
-                    "energy": f["energy"],
-                    "tempo": f["tempo"],
-                    "danceability": f["danceability"],
-                }
-        except Exception as e:
-            logger.info(f"Audio features unavailable (likely deprecated): {e}")
-        return None

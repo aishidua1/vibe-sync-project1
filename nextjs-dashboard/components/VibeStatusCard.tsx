@@ -2,9 +2,11 @@ interface Props {
   type: string;
   score?: number;
   severity?: string;
+  musicMood?: string;
+  taskIntent?: string;
 }
 
-export default function VibeStatusCard({ type, score, severity }: Props) {
+export default function VibeStatusCard({ type, score, severity, musicMood, taskIntent }: Props) {
   let circleClass = "score-circle";
   if (type === "SYNCED") {
     circleClass += " synced";
@@ -23,15 +25,27 @@ export default function VibeStatusCard({ type, score, severity }: Props) {
   return (
     <div className="card vibe-status">
       <h2>VIBE STATUS</h2>
-      <div className={circleClass}>
-        <span>{score != null ? score : "\u2014"}</span>
+      <div className="vibe-status-content">
+        <div className="vibe-score-section">
+          <div className={circleClass}>
+            <span>{score != null ? score : "\u2014"}</span>
+          </div>
+          <p className="status-label">{statusText}</p>
+          {severity && type === "VIBE_MISMATCH" && (
+            <span className={`severity-badge ${severity.toLowerCase()}`}>
+              {severity}
+            </span>
+          )}
+        </div>
+        <div className="vibe-analysis-section">
+          <p className="label">
+            Music: <span>{musicMood || "\u2014"}</span>
+          </p>
+          <p className="label">
+            Task: <span>{taskIntent || "\u2014"}</span>
+          </p>
+        </div>
       </div>
-      <p className="status-label">{statusText}</p>
-      {severity && type === "VIBE_MISMATCH" && (
-        <span className={`severity-badge ${severity.toLowerCase()}`}>
-          {severity}
-        </span>
-      )}
     </div>
   );
 }

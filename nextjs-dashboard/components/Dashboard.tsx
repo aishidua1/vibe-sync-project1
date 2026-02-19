@@ -1,10 +1,9 @@
 "use client";
 
 import { useVibeSync } from "@/hooks/useVibeSync";
-import NowPlayingCard from "./NowPlayingCard";
+import VinylRecord from "./VinylRecord";
 import VibeStatusCard from "./VibeStatusCard";
 import NextEventCard from "./NextEventCard";
-import AnalysisCard from "./AnalysisCard";
 import SuggestionBanner from "./SuggestionBanner";
 import RecommendationsCard from "./RecommendationsCard";
 
@@ -32,38 +31,48 @@ export default function Dashboard() {
         </div>
       ) : (
         <>
-          <div className="cards">
-            <NowPlayingCard
-              track={state.type !== "IDLE" ? state.now_playing : undefined}
-              musicMood={state.type !== "IDLE" ? state.music_mood : ""}
-            />
-            <VibeStatusCard
-              type={state.type}
-              score={state.type !== "IDLE" ? state.compatibility_score : undefined}
-              severity={
-                state.type === "VIBE_MISMATCH" ? state.severity : undefined
-              }
-            />
-            <NextEventCard
-              event={
-                state.type === "VIBE_MISMATCH" ? state.next_event : undefined
-              }
-            />
-            <AnalysisCard
-              musicMood={state.type !== "IDLE" ? state.music_mood : ""}
-              taskIntent={state.type !== "IDLE" ? state.task_intent : ""}
-            />
+          <div className="grid-layout">
+            <div className="grid-top-left">
+              <VinylRecord
+                track={state.type !== "IDLE" ? state.now_playing : undefined}
+              />
+            </div>
+            <div className="grid-top-right">
+              <NextEventCard
+                event={
+                  state.type === "VIBE_MISMATCH" ? state.next_event : undefined
+                }
+              />
+              <SuggestionBanner
+                suggestion={
+                  state.type === "VIBE_MISMATCH"
+                    ? state.transition_suggestion
+                    : null
+                }
+              />
+            </div>
+            <div className="grid-bottom-left">
+              {state.type !== "IDLE" && state.song_recommendations && state.song_recommendations.length > 0 ? (
+                <RecommendationsCard recommendations={state.song_recommendations} />
+              ) : (
+                <div className="card">
+                  <h2>RECOMMENDED</h2>
+                  <p className="label">No recommendations yet</p>
+                </div>
+              )}
+            </div>
+            <div className="grid-bottom-right">
+              <VibeStatusCard
+                type={state.type}
+                score={state.type !== "IDLE" ? state.compatibility_score : undefined}
+                severity={
+                  state.type === "VIBE_MISMATCH" ? state.severity : undefined
+                }
+                musicMood={state.type !== "IDLE" ? state.music_mood : ""}
+                taskIntent={state.type !== "IDLE" ? state.task_intent : ""}
+              />
+            </div>
           </div>
-          <SuggestionBanner
-            suggestion={
-              state.type === "VIBE_MISMATCH"
-                ? state.transition_suggestion
-                : null
-            }
-          />
-          {state.type !== "IDLE" && state.song_recommendations && state.song_recommendations.length > 0 && (
-            <RecommendationsCard recommendations={state.song_recommendations} />
-          )}
         </>
       )}
     </div>

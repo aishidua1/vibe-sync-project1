@@ -2,6 +2,7 @@ export interface TrackInfo {
   name: string;
   artist: string;
   album: string;
+  album_art_url?: string;
   artist_genres: string[];
   popularity: number;
   audio_features?: {
