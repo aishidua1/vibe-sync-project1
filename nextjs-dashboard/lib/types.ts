@@ -1,3 +1,8 @@
+// TypeScript interfaces for the vibe sync application, defining the structure of data related 
+// to music tracks, calendar events, song recommendations, and the different states of the vibe 
+// synchronization process. These types are used throughout the Next.js dashboard to ensure type 
+// safety and consistency when handling data received from the Node.js server.
+
 export interface TrackInfo {
   name: string;
   artist: string;

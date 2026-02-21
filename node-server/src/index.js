@@ -1,3 +1,7 @@
+// Node.js server that receives vibe data from the Python client, processes it with an AI gateway, 
+// evaluates it against user-defined thresholds, and emits updates to connected frontends via Socket.io. 
+// It also caches the latest state for new clients and logs all events for debugging and monitoring purposes.
+
 require("dotenv").config();
 const { createServer } = require("http");
 const { Server } = require("socket.io");

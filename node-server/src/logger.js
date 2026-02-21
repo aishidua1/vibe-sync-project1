@@ -1,3 +1,7 @@
+// Logger setup using Winston to log events with timestamps and levels, 
+// outputting to both console and a file named vibe_sync.log.
+// same idea as utils.py (logging output to the console)
+
 const winston = require("winston");
 
 const logger = winston.createLogger({

@@ -7,6 +7,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import config
 
+# client for fetching calendar events using Google Calendar API with OAuth2 authentication
+
 logger = logging.getLogger(__name__)
 
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
@@ -39,7 +41,7 @@ class CalendarClient:
                 token.write(creds.to_json())
 
         return build("calendar", "v3", credentials=creds)
-
+# fetches calendar events in the next 2 hours by default, returns empty list if no events or error occurs
     def get_upcoming_events(self, hours=2):
         """Returns list of events in the next N hours."""
         try:

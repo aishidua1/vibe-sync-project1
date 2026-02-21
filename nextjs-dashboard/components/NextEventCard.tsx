@@ -1,3 +1,8 @@
+// React component that displays the user's next calendar event, including the event name, 
+// time until the event, and a brief description. If there are no upcoming events, it shows 
+// a placeholder message. It receives the event data as props from the parent component, which 
+// is updated in real-time via Socket.io.
+
 import { CalendarEvent } from "@/lib/types";
 
 interface Props {

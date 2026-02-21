@@ -3,6 +3,8 @@ import socketio
 
 logger = logging.getLogger(__name__)
 
+# Socket.io client that sends vibe data to the Node.js server, with handlers for connection 
+# events and methods to emit vibe_idle and vibe_context events.
 
 class Emitter:
     """Socket.io client that sends vibe data to the Node.js server."""

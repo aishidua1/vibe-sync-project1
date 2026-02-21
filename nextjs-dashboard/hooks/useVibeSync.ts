@@ -1,3 +1,5 @@
+// Custom React hook that connects to the Node.js server via Socket.io to receive real-time updates on the user's vibe state
+
 "use client";
 
 import { useEffect, useState } from "react";

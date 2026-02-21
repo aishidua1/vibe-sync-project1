@@ -1,3 +1,7 @@
+// React component that displays the currently playing track information, including the track 
+// name, artist, album, and the detected music mood. It receives the track information and music
+// mood as props from the parent component, which is updated in real-time via Socket.io.
+
 import { TrackInfo } from "@/lib/types";
 
 interface Props {

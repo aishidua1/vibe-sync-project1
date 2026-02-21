@@ -1,3 +1,5 @@
+// React component that displays the analysis of the user's current music mood and task intent based on the AI's response.
+
 interface Props {
   musicMood: string;
   taskIntent: string;

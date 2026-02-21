@@ -4,6 +4,8 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import config
 
+#gets spotify data using spotipy, with retry/backoff for rate limits and in-memory caching for artist genres
+
 logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 3
@@ -33,7 +35,7 @@ class SpotifyClient:
                     raise
         logger.error(f"Rate limited after {MAX_RETRIES} retries, giving up")
         return None
-
+# fetches the currently playing trach name, returns none if nothing is playing 
     def get_now_playing(self):
         """Returns track info dict or None if nothing is playing."""
         try:
@@ -62,7 +64,7 @@ class SpotifyClient:
         except spotipy.exceptions.SpotifyException as e:
             logger.error(f"Spotify API error: {e}")
             return None
-
+# fetches last 10 recently played tracks
     def get_recent_tracks(self, limit=10):
         """Returns list of recently played tracks with name, artist, and genres."""
         try:
@@ -87,7 +89,7 @@ class SpotifyClient:
         except Exception as e:
             logger.error(f"Error fetching recent tracks: {e}")
             return []
-
+# looks up an artists genre
     def _get_artist_genres(self, artist_id):
         """Get genres for the artist, with in-memory caching."""
         if artist_id in self._genre_cache:

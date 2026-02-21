@@ -34,7 +34,7 @@ export default function Dashboard() {
           <div className="grid-layout">
             <div className="grid-top-left">
               <VinylRecord
-                track={state.type !== "IDLE" ? state.now_playing : undefined}
+                track={state.now_playing}
               />
             </div>
             <div className="grid-top-right">
@@ -52,7 +52,7 @@ export default function Dashboard() {
               />
             </div>
             <div className="grid-bottom-left">
-              {state.type !== "IDLE" && state.song_recommendations && state.song_recommendations.length > 0 ? (
+              {state.song_recommendations && state.song_recommendations.length > 0 ? (
                 <RecommendationsCard recommendations={state.song_recommendations} />
               ) : (
                 <div className="card">
@@ -64,12 +64,12 @@ export default function Dashboard() {
             <div className="grid-bottom-right">
               <VibeStatusCard
                 type={state.type}
-                score={state.type !== "IDLE" ? state.compatibility_score : undefined}
+                score={state.compatibility_score}
                 severity={
                   state.type === "VIBE_MISMATCH" ? state.severity : undefined
                 }
-                musicMood={state.type !== "IDLE" ? state.music_mood : ""}
-                taskIntent={state.type !== "IDLE" ? state.task_intent : ""}
+                musicMood={state.music_mood}
+                taskIntent={state.task_intent}
               />
             </div>
           </div>

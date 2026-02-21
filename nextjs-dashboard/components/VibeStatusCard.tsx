@@ -1,3 +1,5 @@
+// React component that displays the current vibe status, including a score, severity level, music mood, and task intent.
+
 interface Props {
   type: string;
   score?: number;

@@ -1,3 +1,5 @@
+// React component that visually represents the user's current music vibe as a vinyl record
+
 import { TrackInfo } from "@/lib/types";
 
 interface Props {

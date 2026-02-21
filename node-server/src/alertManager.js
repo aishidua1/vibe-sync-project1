@@ -1,3 +1,8 @@
+// AlertManager class that evaluates the AI response against a user-defined threshold and 
+// calendar context to determine if an alert should be emitted. It also includes deduplication 
+// logic to prevent spamming alerts for the same underlying issue, and categorizes alerts by 
+// severity based on the compatibility score.
+
 class AlertManager {
   constructor(threshold = 60) {
     this.threshold = threshold;

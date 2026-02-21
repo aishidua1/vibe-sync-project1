@@ -6,6 +6,9 @@ from calendar_client import CalendarClient
 from emitter import Emitter
 from utils import setup_logging
 
+# main entry point for the Python client that initializes Spotify and Calendar clients, 
+# connects to the Node.js server via the Emitter, and runs a polling loop to fetch data and emit events.
+
 setup_logging()
 logger = logging.getLogger(__name__)
 

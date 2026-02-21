@@ -1,3 +1,9 @@
+// AIGateway class that interfaces with the OpenAI API to analyze the compatibility between 
+// the user's current music and their upcoming schedule. It constructs a detailed prompt based 
+// on the music context, calendar events, and recent listening history, and expects a structured 
+// JSON response with mood, intent, compatibility score, transition suggestions, and song recommendations. 
+// It also includes error handling to ensure robustness in case of API failures or unexpected responses.
+
 const OpenAI = require("openai");
 const logger = require("./logger");
 

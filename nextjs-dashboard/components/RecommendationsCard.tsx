@@ -1,3 +1,8 @@
+// React component that displays a list of song recommendations based on the user's current vibe and 
+// calendar context. Each recommendation includes the song title, artist, and a brief reason for the 
+// recommendation. The component receives the recommendations as props from the parent component, which 
+// is updated in real-time via Socket.io.
+
 import { SongRecommendation } from "@/lib/types";
 
 interface Props {

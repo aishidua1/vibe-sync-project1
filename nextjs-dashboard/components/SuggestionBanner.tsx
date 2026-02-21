@@ -1,3 +1,5 @@
+// React component that displays a suggestion banner at the top of the dashboard when there is a suggestion to show.
+
 interface Props {
   suggestion: string | null | undefined;
 }
