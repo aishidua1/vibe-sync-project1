@@ -1,9 +1,12 @@
 import logging
+import time
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import config
 
 logger = logging.getLogger(__name__)
+
+MAX_RETRIES = 3
 
 
 class SpotifyClient:
@@ -14,11 +17,27 @@ class SpotifyClient:
             redirect_uri=config.SPOTIFY_REDIRECT_URI,
             scope="user-read-currently-playing user-read-playback-state user-read-recently-played",
         ))
+        self._genre_cache = {}
+
+    def _call_with_retry(self, func, *args, **kwargs):
+        """Call a Spotify API function with retry/backoff on 429 rate limits."""
+        for attempt in range(MAX_RETRIES):
+            try:
+                return func(*args, **kwargs)
+            except spotipy.exceptions.SpotifyException as e:
+                if e.http_status == 429:
+                    retry_after = int(e.headers.get("Retry-After", 5)) if e.headers else 5
+                    logger.warning(f"Rate limited (429). Retrying after {retry_after}s (attempt {attempt + 1}/{MAX_RETRIES})")
+                    time.sleep(retry_after)
+                else:
+                    raise
+        logger.error(f"Rate limited after {MAX_RETRIES} retries, giving up")
+        return None
 
     def get_now_playing(self):
         """Returns track info dict or None if nothing is playing."""
         try:
-            result = self.sp.current_user_playing_track()
+            result = self._call_with_retry(self.sp.current_user_playing_track)
 
             if result is None or not result.get("is_playing"):
                 return None
@@ -47,7 +66,9 @@ class SpotifyClient:
     def get_recent_tracks(self, limit=10):
         """Returns list of recently played tracks with name, artist, and genres."""
         try:
-            results = self.sp.current_user_recently_played(limit=limit)
+            results = self._call_with_retry(self.sp.current_user_recently_played, limit=limit)
+            if results is None:
+                return []
             tracks = []
             seen = set()
             for item in results.get("items", []):
@@ -68,10 +89,14 @@ class SpotifyClient:
             return []
 
     def _get_artist_genres(self, artist_id):
-        """Get genres for the artist."""
+        """Get genres for the artist, with in-memory caching."""
+        if artist_id in self._genre_cache:
+            return self._genre_cache[artist_id]
         try:
-            artist = self.sp.artist(artist_id)
-            return artist.get("genres", [])
+            artist = self._call_with_retry(self.sp.artist, artist_id)
+            genres = artist.get("genres", []) if artist else []
+            self._genre_cache[artist_id] = genres
+            return genres
         except Exception:
             return []
 
