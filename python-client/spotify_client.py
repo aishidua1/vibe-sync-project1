@@ -8,7 +8,8 @@ import config
 
 logger = logging.getLogger(__name__)
 
-MAX_RETRIES = 3
+MAX_RETRIES = 2
+MAX_RETRY_AFTER = 60
 
 
 class SpotifyClient:
@@ -20,22 +21,29 @@ class SpotifyClient:
             scope="user-read-currently-playing user-read-playback-state user-read-recently-played",
         ))
         self._genre_cache = {}
+        self._last_track_cache = None
+        self.rate_limited = False
 
     def _call_with_retry(self, func, *args, **kwargs):
         """Call a Spotify API function with retry/backoff on 429 rate limits."""
         for attempt in range(MAX_RETRIES):
             try:
-                return func(*args, **kwargs)
+                result = func(*args, **kwargs)
+                self.rate_limited = False
+                return result
             except spotipy.exceptions.SpotifyException as e:
                 if e.http_status == 429:
                     retry_after = int(e.headers.get("Retry-After", 5)) if e.headers else 5
+                    retry_after = min(retry_after, MAX_RETRY_AFTER)
                     logger.warning(f"Rate limited (429). Retrying after {retry_after}s (attempt {attempt + 1}/{MAX_RETRIES})")
+                    self.rate_limited = True
                     time.sleep(retry_after)
                 else:
                     raise
-        logger.error(f"Rate limited after {MAX_RETRIES} retries, giving up")
+        logger.error(f"Rate limited after {MAX_RETRIES} retries, backing off")
+        self.rate_limited = True
         return None
-# fetches the currently playing trach name, returns none if nothing is playing 
+# fetches the currently playing track name, returns none if nothing is playing
     def get_now_playing(self):
         """Returns track info dict or None if nothing is playing."""
         try:
@@ -59,14 +67,15 @@ class SpotifyClient:
                 "popularity": track.get("popularity", 0),
             }
 
+            self._last_track_cache = track_info
             return track_info
 
         except spotipy.exceptions.SpotifyException as e:
             logger.error(f"Spotify API error: {e}")
             return None
-# fetches last 10 recently played tracks
-    def get_recent_tracks(self, limit=10):
-        """Returns list of recently played tracks with name, artist, and genres."""
+# fetches last 5 recently played tracks (reduced from 10 to save API calls)
+    def get_recent_tracks(self, limit=5):
+        """Returns list of recently played tracks with name and artist."""
         try:
             results = self._call_with_retry(self.sp.current_user_recently_played, limit=limit)
             if results is None:
@@ -79,11 +88,10 @@ class SpotifyClient:
                 if key in seen:
                     continue
                 seen.add(key)
-                artist_id = t["artists"][0]["id"]
                 tracks.append({
                     "name": t["name"],
                     "artist": t["artists"][0]["name"],
-                    "genres": self._get_artist_genres(artist_id),
+                    "genres": self._genre_cache.get(t["artists"][0].get("id"), []),
                 })
             return tracks
         except Exception as e:
@@ -101,4 +109,3 @@ class SpotifyClient:
             return genres
         except Exception:
             return []
-

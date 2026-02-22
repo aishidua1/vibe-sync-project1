@@ -6,11 +6,13 @@ from calendar_client import CalendarClient
 from emitter import Emitter
 from utils import setup_logging
 
-# main entry point for the Python client that initializes Spotify and Calendar clients, 
+# main entry point for the Python client that initializes Spotify and Calendar clients,
 # connects to the Node.js server via the Emitter, and runs a polling loop to fetch data and emit events.
 
 setup_logging()
 logger = logging.getLogger(__name__)
+
+BACKOFF_INTERVAL = 120
 
 
 def poll_cycle(spotify, calendar, emitter):
@@ -40,8 +42,14 @@ def main():
                 poll_cycle(spotify, calendar, emitter)
             except Exception as e:
                 logger.error(f"Poll cycle error: {e}", exc_info=True)
+                if "rate" in str(e).lower() or "limit" in str(e).lower():
+                    spotify.rate_limited = True
 
-            time.sleep(config.POLLING_INTERVAL)
+            if spotify.rate_limited:
+                logger.warning(f"Rate limited, backing off to {BACKOFF_INTERVAL}s polling")
+                time.sleep(BACKOFF_INTERVAL)
+            else:
+                time.sleep(config.POLLING_INTERVAL)
     except KeyboardInterrupt:
         logger.info("Shutting down...")
     finally:
