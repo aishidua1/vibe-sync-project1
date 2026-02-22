@@ -1,11 +1,28 @@
 "use client";
 
 import { useVibeSync } from "@/hooks/useVibeSync";
+import { GlowingEffect } from "./GlowingEffect";
 import VinylRecord from "./VinylRecord";
 import VibeStatusCard from "./VibeStatusCard";
 import NextEventCard from "./NextEventCard";
 import SuggestionBanner from "./SuggestionBanner";
 import RecommendationsCard from "./RecommendationsCard";
+
+function GlowCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="glow-wrapper">
+      <GlowingEffect
+        spread={40}
+        glow={true}
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+        borderWidth={3}
+      />
+      {children}
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { state, connected } = useVibeSync();
@@ -33,44 +50,50 @@ export default function Dashboard() {
         <>
           <div className="grid-layout">
             <div className="grid-top-left">
-              <VinylRecord
-                track={state.now_playing}
-              />
+              <GlowCard>
+                <div className="card vinyl-card">
+                  <VinylRecord track={state.now_playing} />
+                </div>
+              </GlowCard>
             </div>
             <div className="grid-top-right">
-              <NextEventCard
-                event={
-                  state.type === "VIBE_MISMATCH" ? state.next_event : undefined
-                }
-              />
-              <SuggestionBanner
-                suggestion={
-                  state.type === "VIBE_MISMATCH"
-                    ? state.transition_suggestion
-                    : null
-                }
-              />
-            </div>
-            <div className="grid-bottom-left">
-              {state.song_recommendations && state.song_recommendations.length > 0 ? (
-                <RecommendationsCard recommendations={state.song_recommendations} />
-              ) : (
-                <div className="card">
-                  <h2>RECOMMENDED</h2>
-                  <p className="label">No recommendations yet</p>
-                </div>
+              <GlowCard>
+                <NextEventCard
+                  event={
+                    state.type === "VIBE_MISMATCH" ? state.next_event : undefined
+                  }
+                />
+              </GlowCard>
+              {state.type === "VIBE_MISMATCH" && state.transition_suggestion && (
+                <GlowCard>
+                  <SuggestionBanner suggestion={state.transition_suggestion} />
+                </GlowCard>
               )}
             </div>
+            <div className="grid-bottom-left">
+              <GlowCard>
+                {state.song_recommendations && state.song_recommendations.length > 0 ? (
+                  <RecommendationsCard recommendations={state.song_recommendations} />
+                ) : (
+                  <div className="card">
+                    <h2>RECOMMENDED</h2>
+                    <p className="label">No recommendations yet</p>
+                  </div>
+                )}
+              </GlowCard>
+            </div>
             <div className="grid-bottom-right">
-              <VibeStatusCard
-                type={state.type}
-                score={state.compatibility_score}
-                severity={
-                  state.type === "VIBE_MISMATCH" ? state.severity : undefined
-                }
-                musicMood={state.music_mood}
-                taskIntent={state.task_intent}
-              />
+              <GlowCard>
+                <VibeStatusCard
+                  type={state.type}
+                  score={state.compatibility_score}
+                  severity={
+                    state.type === "VIBE_MISMATCH" ? state.severity : undefined
+                  }
+                  musicMood={state.music_mood}
+                  taskIntent={state.task_intent}
+                />
+              </GlowCard>
             </div>
           </div>
         </>
