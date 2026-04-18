@@ -7,8 +7,12 @@ import VibeStatusCard from "./VibeStatusCard";
 import NextEventCard from "./NextEventCard";
 import SuggestionBanner from "./SuggestionBanner";
 import RecommendationsCard from "./RecommendationsCard";
+import VibeOverrideCard from "./VibeOverrideCard";
 
-function GlowCard({ children }: { children: React.ReactNode }) {
+function GlowCard({ children, disableGlow = false }: { children: React.ReactNode; disableGlow?: boolean }) {
+  if (disableGlow) {
+    return <div className="glow-wrapper">{children}</div>;
+  }
   return (
     <div className="glow-wrapper">
       <GlowingEffect
@@ -24,8 +28,8 @@ function GlowCard({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Dashboard() {
-  const { state, connected } = useVibeSync();
+export default function Dashboard({ disableGlow = false }: { disableGlow?: boolean }) {
+  const { state, connected, scoreOverride, originalScore, applyOverride, clearOverride } = useVibeSync();
 
   const isIdle = state.type === "IDLE";
 
@@ -50,14 +54,14 @@ export default function Dashboard() {
         <>
           <div className="grid-layout">
             <div className="grid-top-left">
-              <GlowCard>
+              <GlowCard disableGlow={disableGlow}>
                 <div className="card vinyl-card">
                   <VinylRecord track={state.now_playing} />
                 </div>
               </GlowCard>
             </div>
             <div className="grid-top-right">
-              <GlowCard>
+              <GlowCard disableGlow={disableGlow}>
                 <NextEventCard
                   event={
                     state.type === "VIBE_MISMATCH" ? state.next_event : undefined
@@ -65,13 +69,13 @@ export default function Dashboard() {
                 />
               </GlowCard>
               {state.type === "VIBE_MISMATCH" && state.transition_suggestion && (
-                <GlowCard>
+                <GlowCard disableGlow={disableGlow}>
                   <SuggestionBanner suggestion={state.transition_suggestion} />
                 </GlowCard>
               )}
             </div>
             <div className="grid-bottom-left">
-              <GlowCard>
+              <GlowCard disableGlow={disableGlow}>
                 {state.song_recommendations && state.song_recommendations.length > 0 ? (
                   <RecommendationsCard recommendations={state.song_recommendations} />
                 ) : (
@@ -83,7 +87,7 @@ export default function Dashboard() {
               </GlowCard>
             </div>
             <div className="grid-bottom-right">
-              <GlowCard>
+              <GlowCard disableGlow={disableGlow}>
                 <VibeStatusCard
                   type={state.type}
                   score={state.compatibility_score}
@@ -96,6 +100,19 @@ export default function Dashboard() {
               </GlowCard>
             </div>
           </div>
+
+          {originalScore != null && (
+            <div className="override-section">
+              <GlowCard disableGlow={disableGlow}>
+                <VibeOverrideCard
+                  originalScore={originalScore}
+                  overrideScore={scoreOverride}
+                  onOverride={applyOverride}
+                  onClear={clearOverride}
+                />
+              </GlowCard>
+            </div>
+          )}
         </>
       )}
     </div>

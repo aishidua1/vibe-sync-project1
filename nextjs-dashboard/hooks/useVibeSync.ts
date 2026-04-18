@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { VibeState } from "@/lib/types";
 
@@ -10,10 +10,11 @@ const SERVER_URL =
   process.env.NEXT_PUBLIC_NODE_SERVER_URL || "http://localhost:3001";
 
 export function useVibeSync() {
-  const [state, setState] = useState<VibeState>({
+  const [rawState, setRawState] = useState<VibeState>({
     type: "IDLE",
     message: "Connecting...",
   });
+  const [scoreOverride, setScoreOverride] = useState<number | null>(null);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
@@ -28,7 +29,8 @@ export function useVibeSync() {
     });
 
     socket.on("vibe_update", (data: VibeState) => {
-      setState(data);
+      setRawState(data);
+      setScoreOverride(null); // reset override when new data arrives
     });
 
     return () => {
@@ -36,5 +38,41 @@ export function useVibeSync() {
     };
   }, []);
 
-  return { state, connected };
+  const applyOverride = useCallback((newScore: number) => {
+    setScoreOverride(newScore);
+  }, []);
+
+  const clearOverride = useCallback(() => {
+    setScoreOverride(null);
+  }, []);
+
+  // Build the effective state with the override applied
+  let state = rawState;
+  if (scoreOverride !== null && rawState.type !== "IDLE") {
+    const severity =
+      scoreOverride < 30 ? "HIGH" as const :
+      scoreOverride < 50 ? "MEDIUM" as const :
+      scoreOverride < 60 ? "LOW" as const : undefined;
+
+    if (scoreOverride >= 60) {
+      state = {
+        ...rawState,
+        type: "SYNCED",
+        compatibility_score: scoreOverride,
+      };
+    } else {
+      state = {
+        ...rawState,
+        type: "VIBE_MISMATCH",
+        compatibility_score: scoreOverride,
+        severity: severity!,
+        transition_suggestion: rawState.type === "VIBE_MISMATCH" ? rawState.transition_suggestion : null,
+        next_event: rawState.type === "VIBE_MISMATCH" ? rawState.next_event : { summary: "", description: "", start_time: "", minutes_until: 0, location: "" },
+      };
+    }
+  }
+
+  const originalScore = rawState.type !== "IDLE" ? rawState.compatibility_score : undefined;
+
+  return { state, connected, scoreOverride, originalScore, applyOverride, clearOverride };
 }

@@ -9,6 +9,20 @@ interface Props {
   event?: CalendarEvent;
 }
 
+function buildCalendarUrl(event: CalendarEvent): string {
+  const start = new Date(event.start_time);
+  const end = new Date(start.getTime() + 60 * 60 * 1000); // default 1 hour
+  const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.summary,
+    dates: `${fmt(start)}/${fmt(end)}`,
+    details: event.description || "",
+    location: event.location || "",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 export default function NextEventCard({ event }: Props) {
   return (
     <div className="card next-event">
@@ -22,6 +36,16 @@ export default function NextEventCard({ event }: Props) {
           : "\u2014"}
       </p>
       <p className="event-description">{event?.description || "\u2014"}</p>
+      {event && (
+        <a
+          href={buildCalendarUrl(event)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="calendar-btn"
+        >
+          Open in Calendar
+        </a>
+      )}
     </div>
   );
 }

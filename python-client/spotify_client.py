@@ -1,5 +1,7 @@
 import logging
 import time
+import json
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import config
@@ -10,16 +12,39 @@ logger = logging.getLogger(__name__)
 
 MAX_RETRIES = 2
 MAX_RETRY_AFTER = 60
+CACHE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache")
+
+
+def _create_spotify_client():
+    """Create a Spotify client, using cached token directly if still valid to avoid rate-limited refresh."""
+    auth_manager = SpotifyOAuth(
+        client_id=config.SPOTIFY_CLIENT_ID,
+        client_secret=config.SPOTIFY_CLIENT_SECRET,
+        redirect_uri=config.SPOTIFY_REDIRECT_URI,
+        scope="user-read-currently-playing user-read-playback-state user-read-recently-played",
+        open_browser=False,
+    )
+
+    # Try to use the cached token directly without triggering a refresh
+    if os.path.exists(CACHE_PATH):
+        try:
+            with open(CACHE_PATH, "r") as f:
+                token_info = json.load(f)
+            if not auth_manager.is_token_expired(token_info):
+                logger.info("Using cached Spotify token directly (still valid)")
+                return spotipy.Spotify(auth=token_info["access_token"], retries=0, requests_timeout=10)
+            else:
+                logger.info("Cached token expired, attempting refresh")
+        except Exception as e:
+            logger.warning(f"Could not read cached token: {e}")
+
+    # Fallback: let spotipy handle auth normally
+    return spotipy.Spotify(auth_manager=auth_manager, retries=0, requests_timeout=10)
 
 
 class SpotifyClient:
     def __init__(self):
-        self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-            client_id=config.SPOTIFY_CLIENT_ID,
-            client_secret=config.SPOTIFY_CLIENT_SECRET,
-            redirect_uri=config.SPOTIFY_REDIRECT_URI,
-            scope="user-read-currently-playing user-read-playback-state user-read-recently-played",
-        ))
+        self.sp = _create_spotify_client()
         self._genre_cache = {}
         self._last_track_cache = None
         self.rate_limited = False
@@ -38,8 +63,18 @@ class SpotifyClient:
                     logger.warning(f"Rate limited (429). Retrying after {retry_after}s (attempt {attempt + 1}/{MAX_RETRIES})")
                     self.rate_limited = True
                     time.sleep(retry_after)
+                elif e.http_status == 401:
+                    logger.warning("Token expired mid-session, recreating client")
+                    self.sp = _create_spotify_client()
+                    return None
                 else:
                     raise
+            except Exception as e:
+                if "rate" in str(e).lower() or "limit" in str(e).lower():
+                    logger.warning(f"Rate limit detected: {e}")
+                    self.rate_limited = True
+                    return None
+                raise
         logger.error(f"Rate limited after {MAX_RETRIES} retries, backing off")
         self.rate_limited = True
         return None
@@ -72,6 +107,11 @@ class SpotifyClient:
 
         except spotipy.exceptions.SpotifyException as e:
             logger.error(f"Spotify API error: {e}")
+            return None
+        except Exception as e:
+            if "rate" in str(e).lower() or "limit" in str(e).lower():
+                self.rate_limited = True
+            logger.error(f"Spotify error: {e}")
             return None
 # fetches last 5 recently played tracks (reduced from 10 to save API calls)
     def get_recent_tracks(self, limit=5):

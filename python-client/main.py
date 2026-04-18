@@ -24,6 +24,7 @@ def poll_cycle(spotify, calendar, emitter):
         return
 
     events = calendar.get_upcoming_events(hours=2)
+    logger.info(f"Calendar returned {len(events)} events: {[e['summary'] for e in events]}")
     recent_tracks = spotify.get_recent_tracks()
     emitter.emit_context(track, events, recent_tracks)
 
