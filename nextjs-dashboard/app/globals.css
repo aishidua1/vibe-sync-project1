@@ -856,7 +856,7 @@ header h1 {
     }
 
     body {
-        padding: 0.5rem 0.6rem;
+        padding: 0.3rem 0.25rem;
         align-items: stretch;
     }
 
@@ -872,8 +872,8 @@ header h1 {
     }
 
     .vinyl-record {
-        width: 88px;
-        height: 88px;
+        width: 95px;
+        height: 95px;
         box-shadow:
             0 0 0 2px rgba(224, 64, 251, 0.5),
             0 0 20px rgba(224, 64, 251, 0.15);
@@ -897,24 +897,28 @@ header h1 {
 
     .card {
         backdrop-filter: none;
-        padding: 0.55rem 0.75rem;
+        padding: 0.5rem 0.7rem;
         border-radius: 0.7rem;
     }
 
     .card h2 {
-        font-size: 0.85rem;
-        margin-bottom: 0.35rem;
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
     }
 
     .suggestion-banner {
         backdrop-filter: none;
-        padding: 0.6rem 0.8rem;
+        padding: 0.55rem 0.75rem;
         border-radius: 0.7rem;
     }
 
     .suggestion-banner p {
-        font-size: 1rem;
-        line-height: 1.35;
+        font-size: 1.15rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     header {
@@ -922,18 +926,18 @@ header h1 {
     }
 
     header h1 {
-        font-size: 1.35rem;
+        font-size: 1.65rem;
     }
 
     .subtitle {
-        font-size: 0.8rem;
-        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
         letter-spacing: 0.2em;
     }
 
     .connection-status {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.75rem;
+        font-size: 0.85rem;
+        padding: 0.25rem 0.8rem;
     }
 
     .header-controls {
@@ -941,15 +945,15 @@ header h1 {
     }
 
     .source-toggle {
-        font-size: 0.75rem;
-        padding: 0.25rem 0.8rem;
+        font-size: 0.85rem;
+        padding: 0.25rem 0.85rem;
         backdrop-filter: none;
     }
 
     .grid-layout {
-        gap: 0.35rem;
+        gap: 0.3rem;
         grid-template-columns: 1.2fr 1fr;
-        grid-template-rows: 175px 155px;
+        grid-template-rows: 175px 150px;
     }
 
     .grid-top-left,
@@ -1002,34 +1006,35 @@ header h1 {
     }
 
     .vinyl-track-name {
-        font-size: 1.3rem;
+        font-size: 1.55rem;
         margin-bottom: 0.15rem;
+        line-height: 1.15;
     }
 
     .vinyl-track-artist {
-        font-size: 1.05rem;
+        font-size: 1.2rem;
     }
 
     .vinyl-track-album {
-        font-size: 0.85rem;
-        margin-top: 0.15rem;
+        font-size: 1rem;
+        margin-top: 0.1rem;
     }
 
     .score-circle {
-        width: 68px;
-        height: 68px;
-        font-size: 1.55rem;
-        border-width: 2px;
+        width: 78px;
+        height: 78px;
+        font-size: 1.9rem;
+        border-width: 3px;
         margin-bottom: 0.2rem;
     }
 
     .status-label {
-        font-size: 0.9rem;
+        font-size: 1.05rem;
     }
 
     .severity-badge {
-        font-size: 0.75rem;
-        padding: 0.2rem 0.6rem;
+        font-size: 0.85rem;
+        padding: 0.25rem 0.7rem;
         margin-top: 0.25rem;
     }
 
@@ -1038,25 +1043,26 @@ header h1 {
     }
 
     .vibe-analysis-section {
-        gap: 0.25rem;
+        gap: 0.2rem;
     }
 
     .label {
-        font-size: 1rem;
-        line-height: 1.35;
+        font-size: 1.15rem;
+        line-height: 1.3;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
     .event-name {
-        font-size: 1.15rem;
-        margin-bottom: 0.2rem;
+        font-size: 1.4rem;
+        margin-bottom: 0.15rem;
+        line-height: 1.2;
     }
 
     .event-time {
-        font-size: 0.95rem;
+        font-size: 1.1rem;
         margin-bottom: 0;
     }
 
@@ -1073,11 +1079,14 @@ header h1 {
     }
 
     .recommendation-item {
-        padding: 0.35rem 0.65rem;
-        border-radius: 0.45rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 0.5rem;
         flex-direction: row;
         align-items: baseline;
         gap: 0.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .recommendation-item:hover {
@@ -1085,12 +1094,12 @@ header h1 {
     }
 
     .rec-title {
-        font-size: 1rem;
+        font-size: 1.15rem;
         line-height: 1.2;
     }
 
     .rec-artist {
-        font-size: 0.85rem;
+        font-size: 1rem;
         line-height: 1.2;
     }
 
@@ -1130,11 +1139,11 @@ header h1 {
     }
 
     .override-score-value {
-        font-size: 1.15rem;
+        font-size: 1.4rem;
     }
 
     .override-score-max {
-        font-size: 0.7rem;
+        font-size: 0.85rem;
     }
 
     .override-presets {
@@ -1144,20 +1153,20 @@ header h1 {
     }
 
     .preset-btn {
-        padding: 0.3rem 0.4rem;
-        font-size: 0.65rem;
+        padding: 0.3rem 0.45rem;
+        font-size: 0.8rem;
     }
 
     .override-reset {
         grid-column: 3 / span 2;
         grid-row: 1 / span 2;
         margin-top: 0;
-        padding: 0.35rem 0.7rem;
-        font-size: 0.65rem;
+        padding: 0.35rem 0.8rem;
+        font-size: 0.8rem;
     }
 
     .vibe-override h2 {
-        font-size: 0.65rem;
-        max-width: 5.5rem;
+        font-size: 0.85rem;
+        max-width: 6rem;
     }
 }
