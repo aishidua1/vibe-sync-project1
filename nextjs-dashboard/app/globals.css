@@ -864,6 +864,13 @@ header h1 {
         max-width: 100%;
     }
 
+    /* Belt-and-suspenders: hide the shader + veil on small screens even if
+       JS detection somehow fails to keep the React component unmounted. */
+    .shader-bg,
+    .shader-veil {
+        display: none !important;
+    }
+
     .vinyl-record {
         width: 88px;
         height: 88px;

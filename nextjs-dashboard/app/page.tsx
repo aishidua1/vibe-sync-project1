@@ -5,14 +5,21 @@ import MeshGradientBg from "@/components/MeshGradientBg";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isLowPower, setIsLowPower] = useState(false);
+  const [isLowPower, setIsLowPower] = useState(true);
 
   useEffect(() => {
-    // Detect small screens (Pi 7" touchscreen is 800x480)
-    const small = window.innerWidth <= 800;
-    // Also check for weak GPU via user agent
-    const isPi = /Linux\s+armv|aarch64/.test(navigator.userAgent);
-    setIsLowPower(small || isPi);
+    // Use the same breakpoint as the compact CSS so React + CSS stay in sync.
+    // Also flag weak-GPU ARM/Linux boxes and anything that looks like a Raspberry Pi.
+    const mq = window.matchMedia("(max-width: 900px)");
+    const ua = navigator.userAgent;
+    const weakGpu =
+      /arm(v\d|64)?|aarch64|raspberry/i.test(ua) ||
+      /Linux/i.test(ua) && !/Android/i.test(ua) && window.innerWidth <= 1280;
+
+    const update = () => setIsLowPower(mq.matches || weakGpu);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
 
   return (
