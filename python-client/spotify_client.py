@@ -22,7 +22,7 @@ def _create_spotify_client():
         client_secret=config.SPOTIFY_CLIENT_SECRET,
         redirect_uri=config.SPOTIFY_REDIRECT_URI,
         scope="user-read-currently-playing user-read-playback-state user-read-recently-played",
-        open_browser=False,
+        open_browser=True,
     )
 
     # Try to use the cached token directly without triggering a refresh

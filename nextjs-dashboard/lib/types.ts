@@ -44,6 +44,7 @@ export interface SyncedState {
   task_intent: string;
   now_playing?: TrackInfo;
   song_recommendations?: SongRecommendation[];
+  next_event?: CalendarEvent;
   timestamp?: string;
 }
 

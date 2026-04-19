@@ -63,7 +63,7 @@ body {
 .container {
     position: relative;
     z-index: 1;
-    max-width: 1000px;
+    max-width: 1280px;
     width: 100%;
 }
 
@@ -280,32 +280,6 @@ header h1 {
 @keyframes vinyl-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
-}
-
-/* Low-power mode for Raspberry Pi / small screens */
-@media (max-width: 800px) {
-    .vinyl-record {
-        animation: none;
-    }
-
-    .score-circle.low,
-    .score-circle.medium,
-    .score-circle.high {
-        animation: none;
-    }
-
-    .idle-icon {
-        animation: none;
-        opacity: 0.3;
-    }
-
-    .card {
-        backdrop-filter: none;
-    }
-
-    .suggestion-banner {
-        backdrop-filter: none;
-    }
 }
 
 .vinyl-info {
@@ -828,4 +802,296 @@ header h1 {
     color: var(--text);
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Low-power mode for Raspberry Pi / small screens — must be last to win cascade */
+@media (max-width: 900px) {
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    body {
+        padding: 0.5rem 0.6rem;
+        align-items: stretch;
+    }
+
+    .container {
+        max-width: 100%;
+    }
+
+    .vinyl-record {
+        animation: none;
+        width: 68px;
+        height: 68px;
+        box-shadow:
+            0 0 0 2px rgba(224, 64, 251, 0.5),
+            0 0 20px rgba(224, 64, 251, 0.15);
+    }
+
+    .vinyl-hole {
+        width: 6px;
+        height: 6px;
+    }
+
+    .score-circle.low,
+    .score-circle.medium,
+    .score-circle.high {
+        animation: none;
+    }
+
+    .idle-icon {
+        animation: none;
+        opacity: 0.3;
+    }
+
+    .card {
+        backdrop-filter: none;
+        padding: 0.55rem 0.75rem;
+        border-radius: 0.7rem;
+    }
+
+    .card h2 {
+        font-size: 0.55rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .suggestion-banner {
+        backdrop-filter: none;
+        padding: 0.55rem 0.75rem;
+        border-radius: 0.7rem;
+    }
+
+    .suggestion-banner p {
+        font-size: 0.7rem;
+        line-height: 1.4;
+    }
+
+    header {
+        margin-bottom: 0;
+    }
+
+    header h1 {
+        font-size: 1rem;
+    }
+
+    .subtitle {
+        font-size: 0.6rem;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.2em;
+    }
+
+    .connection-status {
+        font-size: 0.55rem;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .grid-layout {
+        gap: 0.4rem;
+        grid-template-columns: 1.2fr 1fr;
+        grid-template-rows: 140px 140px;
+    }
+
+    .grid-top-left,
+    .grid-top-right,
+    .grid-bottom-left,
+    .grid-bottom-right {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .grid-top-left > .glow-wrapper,
+    .grid-bottom-left > .glow-wrapper,
+    .grid-bottom-right > .glow-wrapper {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .grid-layout .card,
+    .grid-layout .suggestion-banner {
+        overflow: hidden;
+        min-height: 0;
+    }
+
+    .grid-top-right {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        gap: 0.4rem;
+    }
+
+    .grid-top-right > .glow-wrapper {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .grid-top-right > .glow-wrapper .card,
+    .grid-top-right > .glow-wrapper .suggestion-banner {
+        height: 100%;
+    }
+
+    .grid-top-right:has(> .glow-wrapper:only-child) {
+        grid-template-rows: 1fr;
+    }
+
+    .vinyl-card {
+        padding: 0.55rem;
+    }
+
+    .vinyl-container {
+        gap: 0.4rem;
+    }
+
+    .vinyl-track-name {
+        font-size: 0.9rem;
+        margin-bottom: 0.1rem;
+    }
+
+    .vinyl-track-artist {
+        font-size: 0.75rem;
+    }
+
+    .vinyl-track-album {
+        font-size: 0.65rem;
+        margin-top: 0.1rem;
+    }
+
+    .score-circle {
+        width: 52px;
+        height: 52px;
+        font-size: 1.05rem;
+        border-width: 2px;
+        margin-bottom: 0.2rem;
+    }
+
+    .status-label {
+        font-size: 0.65rem;
+    }
+
+    .severity-badge {
+        font-size: 0.55rem;
+        padding: 0.15rem 0.5rem;
+        margin-top: 0.2rem;
+    }
+
+    .vibe-status-content {
+        gap: 0.75rem;
+    }
+
+    .vibe-analysis-section {
+        gap: 0.3rem;
+    }
+
+    .label {
+        font-size: 0.7rem;
+        line-height: 1.4;
+    }
+
+    .event-name {
+        font-size: 0.85rem;
+        margin-bottom: 0.15rem;
+    }
+
+    .event-time {
+        font-size: 0.7rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .event-description {
+        font-size: 0.7rem;
+        line-height: 1.35;
+    }
+
+    .calendar-btn {
+        margin-top: 0.4rem;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.6rem;
+    }
+
+    .recommendations-list {
+        gap: 0.2rem;
+    }
+
+    .recommendation-item {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.4rem;
+        flex-direction: row;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    .recommendation-item:hover {
+        transform: none;
+    }
+
+    .rec-title {
+        font-size: 0.7rem;
+        line-height: 1.25;
+    }
+
+    .rec-artist {
+        font-size: 0.6rem;
+        line-height: 1.25;
+    }
+
+    .rec-reason {
+        display: none;
+    }
+
+    .override-section {
+        margin-top: 0.4rem;
+    }
+
+    .vibe-override {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+        gap: 0.3rem 0.6rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .vibe-override h2 {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+        margin-bottom: 0;
+        max-width: 4.5rem;
+        line-height: 1.1;
+    }
+
+    .override-description {
+        display: none;
+    }
+
+    .override-slider-section {
+        grid-column: 2;
+        grid-row: 1;
+        gap: 0.5rem;
+    }
+
+    .override-score-value {
+        font-size: 1rem;
+    }
+
+    .override-score-max {
+        font-size: 0.6rem;
+    }
+
+    .override-presets {
+        grid-column: 2;
+        grid-row: 2;
+        gap: 0.35rem;
+    }
+
+    .preset-btn {
+        padding: 0.25rem 0.35rem;
+        font-size: 0.55rem;
+    }
+
+    .override-reset {
+        grid-column: 3 / span 2;
+        grid-row: 1 / span 2;
+        margin-top: 0;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.55rem;
+    }
 }

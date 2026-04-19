@@ -73,6 +73,7 @@ export function useVibeSync() {
   }
 
   const originalScore = rawState.type !== "IDLE" ? rawState.compatibility_score : undefined;
+  const nextEvent = rawState.type !== "IDLE" ? rawState.next_event : undefined;
 
-  return { state, connected, scoreOverride, originalScore, applyOverride, clearOverride };
+  return { state, nextEvent, connected, scoreOverride, originalScore, applyOverride, clearOverride };
 }

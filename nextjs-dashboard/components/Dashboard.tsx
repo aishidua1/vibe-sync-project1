@@ -29,7 +29,7 @@ function GlowCard({ children, disableGlow = false }: { children: React.ReactNode
 }
 
 export default function Dashboard({ disableGlow = false }: { disableGlow?: boolean }) {
-  const { state, connected, scoreOverride, originalScore, applyOverride, clearOverride } = useVibeSync();
+  const { state, nextEvent, connected, scoreOverride, originalScore, applyOverride, clearOverride } = useVibeSync();
 
   const isIdle = state.type === "IDLE";
 
@@ -62,11 +62,7 @@ export default function Dashboard({ disableGlow = false }: { disableGlow?: boole
             </div>
             <div className="grid-top-right">
               <GlowCard disableGlow={disableGlow}>
-                <NextEventCard
-                  event={
-                    state.type === "VIBE_MISMATCH" ? state.next_event : undefined
-                  }
-                />
+                <NextEventCard event={nextEvent} />
               </GlowCard>
               {state.type === "VIBE_MISMATCH" && state.transition_suggestion && (
                 <GlowCard disableGlow={disableGlow}>

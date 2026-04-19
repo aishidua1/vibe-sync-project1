@@ -9,8 +9,9 @@ interface Props {
   event?: CalendarEvent;
 }
 
-function buildCalendarUrl(event: CalendarEvent): string {
+function buildCalendarUrl(event: CalendarEvent): string | null {
   const start = new Date(event.start_time);
+  if (isNaN(start.getTime())) return null;
   const end = new Date(start.getTime() + 60 * 60 * 1000); // default 1 hour
   const fmt = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const params = new URLSearchParams({
@@ -36,16 +37,19 @@ export default function NextEventCard({ event }: Props) {
           : "\u2014"}
       </p>
       <p className="event-description">{event?.description || "\u2014"}</p>
-      {event && (
-        <a
-          href={buildCalendarUrl(event)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="calendar-btn"
-        >
-          Open in Calendar
-        </a>
-      )}
+      {event && (() => {
+        const url = buildCalendarUrl(event);
+        return url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="calendar-btn"
+          >
+            Open in Calendar
+          </a>
+        ) : null;
+      })()}
     </div>
   );
 }

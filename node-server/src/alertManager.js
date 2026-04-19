@@ -41,6 +41,7 @@ class AlertManager {
         music_mood: aiResponse.music_mood || "unknown",
         task_intent: aiResponse.task_intent || "unknown",
         song_recommendations: aiResponse.song_recommendations || [],
+        next_event: calendarContext && calendarContext.length > 0 ? calendarContext[0] : undefined,
         timestamp: new Date().toISOString(),
       };
     }
