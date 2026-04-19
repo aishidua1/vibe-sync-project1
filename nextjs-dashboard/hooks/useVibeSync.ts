@@ -8,10 +8,19 @@ import { VibeState } from "@/lib/types";
 
 export type DataSource = "live" | "mock";
 
+// Default to the host that served the dashboard so the Pi (kiosk browser)
+// reaches back to the laptop running the servers. Env vars override for deployments.
+function defaultUrl(port: number): string {
+  if (typeof window !== "undefined") {
+    return `${window.location.protocol}//${window.location.hostname}:${port}`;
+  }
+  return `http://localhost:${port}`;
+}
+
 const LIVE_URL =
-  process.env.NEXT_PUBLIC_NODE_SERVER_URL || "http://localhost:3001";
+  process.env.NEXT_PUBLIC_NODE_SERVER_URL || defaultUrl(3001);
 const MOCK_URL =
-  process.env.NEXT_PUBLIC_MOCK_SERVER_URL || "http://localhost:3002";
+  process.env.NEXT_PUBLIC_MOCK_SERVER_URL || defaultUrl(3002);
 const SOURCE_STORAGE_KEY = "vibeSyncDataSource";
 
 export function useVibeSync() {

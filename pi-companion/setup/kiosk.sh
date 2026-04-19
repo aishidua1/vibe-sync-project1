@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 # Launches Chromium in kiosk mode pointing at the Vibe-Sync dashboard.
 # This script is called by the desktop autostart entry or run manually.
+#
+# Dashboard URL resolution (in order):
+#   1. DASHBOARD_URL environment variable
+#   2. DASHBOARD_URL from ~/.vibe-sync-kiosk.env (if present)
+#   3. Fallback default below
 
-DASHBOARD_URL="http://10.197.86.221:3000"
+[ -f "$HOME/.vibe-sync-kiosk.env" ] && source "$HOME/.vibe-sync-kiosk.env"
+
+DASHBOARD_URL="${DASHBOARD_URL:-http://localhost:3000}"
 
 # Disable screen blanking and screensaver
 xset s off
