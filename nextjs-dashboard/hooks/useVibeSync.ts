@@ -6,8 +6,13 @@ import { useEffect, useState, useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 import { VibeState } from "@/lib/types";
 
-const SERVER_URL =
+export type DataSource = "live" | "mock";
+
+const LIVE_URL =
   process.env.NEXT_PUBLIC_NODE_SERVER_URL || "http://localhost:3001";
+const MOCK_URL =
+  process.env.NEXT_PUBLIC_MOCK_SERVER_URL || "http://localhost:3002";
+const SOURCE_STORAGE_KEY = "vibeSyncDataSource";
 
 export function useVibeSync() {
   const [rawState, setRawState] = useState<VibeState>({
@@ -16,9 +21,21 @@ export function useVibeSync() {
   });
   const [scoreOverride, setScoreOverride] = useState<number | null>(null);
   const [connected, setConnected] = useState(false);
+  const [source, setSource] = useState<DataSource>("live");
 
+  // Load saved source preference on mount
   useEffect(() => {
-    const socket: Socket = io(SERVER_URL);
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem(SOURCE_STORAGE_KEY);
+    if (saved === "live" || saved === "mock") {
+      setSource(saved);
+    }
+  }, []);
+
+  // Connect socket whenever source changes
+  useEffect(() => {
+    const url = source === "mock" ? MOCK_URL : LIVE_URL;
+    const socket: Socket = io(url);
 
     socket.on("connect", () => {
       setConnected(true);
@@ -36,6 +53,18 @@ export function useVibeSync() {
     return () => {
       socket.disconnect();
     };
+  }, [source]);
+
+  const toggleSource = useCallback(() => {
+    setSource((prev) => {
+      const next = prev === "live" ? "mock" : "live";
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(SOURCE_STORAGE_KEY, next);
+      }
+      setRawState({ type: "IDLE", message: "Switching source..." });
+      setConnected(false);
+      return next;
+    });
   }, []);
 
   const applyOverride = useCallback((newScore: number) => {
@@ -75,5 +104,5 @@ export function useVibeSync() {
   const originalScore = rawState.type !== "IDLE" ? rawState.compatibility_score : undefined;
   const nextEvent = rawState.type !== "IDLE" ? rawState.next_event : undefined;
 
-  return { state, nextEvent, connected, scoreOverride, originalScore, applyOverride, clearOverride };
+  return { state, nextEvent, connected, scoreOverride, originalScore, applyOverride, clearOverride, source, toggleSource };
 }

@@ -29,7 +29,7 @@ function GlowCard({ children, disableGlow = false }: { children: React.ReactNode
 }
 
 export default function Dashboard({ disableGlow = false }: { disableGlow?: boolean }) {
-  const { state, nextEvent, connected, scoreOverride, originalScore, applyOverride, clearOverride } = useVibeSync();
+  const { state, nextEvent, connected, scoreOverride, originalScore, applyOverride, clearOverride, source, toggleSource } = useVibeSync();
 
   const isIdle = state.type === "IDLE";
 
@@ -37,11 +37,21 @@ export default function Dashboard({ disableGlow = false }: { disableGlow?: boole
     <div className="container">
       <header>
         <h1>VIBE-SYNC</h1>
-        <span
-          className={`connection-status ${connected ? "connected" : "disconnected"}`}
-        >
-          {connected ? "Live" : "Reconnecting..."}
-        </span>
+        <div className="header-controls">
+          <button
+            type="button"
+            onClick={toggleSource}
+            className={`source-toggle source-${source}`}
+            title={source === "live" ? "Switch to mock data" : "Switch to live data"}
+          >
+            {source === "live" ? "LIVE DATA" : "DEMO DATA"}
+          </button>
+          <span
+            className={`connection-status ${connected ? "connected" : "disconnected"}`}
+          >
+            {connected ? "Live" : "Reconnecting..."}
+          </span>
+        </div>
       </header>
       <p className="subtitle">Desk Companion</p>
 
