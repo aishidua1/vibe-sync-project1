@@ -21,14 +21,29 @@ if command -v unclutter &>/dev/null; then
   unclutter -idle 3 &
 fi
 
-# Wait briefly for the network and dashboard to be reachable
-sleep 5
+# Wait for the dashboard to actually answer on localhost:3000 so the kiosk
+# doesn't race ahead and land on an error/Spectrum page if npm start is slow.
+for i in $(seq 1 30); do
+  if curl -s --max-time 1 "$DASHBOARD_URL" >/dev/null; then
+    break
+  fi
+  sleep 1
+done
 
-# Launch Chromium in kiosk mode — no UI, fullscreen, no prompts
+# Use a throwaway profile so Chromium doesn't restore stale tabs from earlier
+# sessions (which can resolve to wrong URLs and trigger ISP block pages).
+PROFILE_DIR="/tmp/vibe-sync-kiosk-profile-$$"
+rm -rf "$PROFILE_DIR"
+
+# Launch Chromium in kiosk mode — no UI, fullscreen, no prompts, fresh profile
 chromium-browser \
+  --user-data-dir="$PROFILE_DIR" \
+  --no-first-run \
+  --no-default-browser-check \
+  --disable-session-crashed-bubble \
+  --disable-restore-session-state \
   --noerrdialogs \
   --disable-infobars \
-  --disable-session-crashed-bubble \
   --disable-features=TranslateUI \
   --kiosk "$DASHBOARD_URL" \
   --check-for-update-interval=31536000
